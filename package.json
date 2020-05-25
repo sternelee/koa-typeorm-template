@@ -1,0 +1,42 @@
+{
+  "name": "koa-typeorm-template",
+  "version": "1.0.0",
+  "description": "基于koa和typeorm的nodejs后端模板",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --watch src/**/*.ts --exec ts-node src/app.ts",
+    "serve": "pm2 start --name koa --interpreter node_modules/.bin/ts-node src/app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/sternelee/koa-typeorm-template.git"
+  },
+  "author": "sternelee",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server-koa": "^2.13.1",
+    "koa": "^2.12.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-json": "^2.0.2",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^8.0.8",
+    "koa-static": "^5.0.0",
+    "nodemon": "^2.0.4",
+    "reflect-metadata": "^0.1.13",
+    "sqlite3": "^4.2.0",
+    "ts-node": "^8.10.1",
+    "typeorm": "^0.2.25",
+    "typescript": "^3.9.3",
+    "ws": "^7.3.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.11.3",
+    "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-json": "^2.0.18",
+    "@types/koa-logger": "^3.1.1",
+    "@types/koa-router": "^7.4.1",
+    "@types/koa-static": "^4.0.1",
+    "@types/node": "^14.0.5"
+  }
+}
