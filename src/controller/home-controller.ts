@@ -10,4 +10,11 @@ export default class HomeController {
   static async we(ctx) {
     ctx.body = 'hello we123'
   }
+  static async auth(ctx) {
+    const grantAuth = ctx.session.grant.response
+    ctx.body = {
+      data: grantAuth,
+      result: 'auth OK'
+    }
+  }
 }
