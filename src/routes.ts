@@ -1,4 +1,5 @@
 import HomeController from './controller/home-controller'
+import OauthController from './controller/oauth-controller'
 
 export default [
   {
@@ -9,6 +10,11 @@ export default [
   {
     path: '/oauth/redirect',
     method: 'get',
-    action: HomeController.auth
+    action: OauthController.auth
+  },
+  {
+    path: '/oauth/user',
+    method: 'get',
+    action: OauthController.user
   }
 ]
