@@ -14,6 +14,7 @@ export default class OauthController {
       console.log(sessionKey)
       // ctx.session.token = sessionKey
       const userinfo = await GithubService.user(sessionKey)
+      console.log(userinfo)
       user = {
         uid: 'gh_' + userinfo.id,
         uname: userinfo.name
