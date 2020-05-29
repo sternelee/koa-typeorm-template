@@ -15,13 +15,12 @@ export default class GithubService {
     })
     return data
   }
-  static async user (ctx: Context) {
-    const { github } = ctx.session
+  static async user (token) {
     const { data } = await axios({
       url: 'https://api.github.com/user',
       method: 'GET',
       headers: {
-        Authorization: `${github.token_type} ${github.access_token}`
+        Authorization: `${token.token_type} ${token.access_token}`
       }
     })
     return data
