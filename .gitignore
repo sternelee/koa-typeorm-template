@@ -83,3 +83,4 @@ typings/
 
 *.db
 yarn.lock
+package-lock.json
