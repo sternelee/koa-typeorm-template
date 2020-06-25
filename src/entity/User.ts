@@ -45,4 +45,10 @@ export class User {
     nullable: true
   })
   tags: string[]
+
+  @Column({
+    default: [],
+    nullable: true
+  })
+  pubs: string[]
 }
