@@ -12,10 +12,20 @@ export class User {
 
   @Column({
     default: null,
+    nullable: true
+  })
+  platform: string
+
+  @Column({
+    default: null,
+    nullable: true
   })
   username: string;
 
-  @Column()
+  @Column({
+    default: null,
+    nullable: true
+  })
   avatar: string;
 
   @Column()
@@ -26,6 +36,13 @@ export class User {
 
   @Column({
     default: null,
+    nullable: true
   })
   email: string;
+
+  @Column({
+    default: [],
+    nullable: true
+  })
+  tags: string[]
 }
