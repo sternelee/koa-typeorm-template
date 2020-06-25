@@ -10,30 +10,48 @@ export default class Post {
   @Column()
   pid: string;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   author: string;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   date: Date;
 
   @Column()
   title: string;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   title_cn: string;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   lead_image_url: string;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   word_count: number;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   url: string;
 
-  @Column("text")
+  @Column({
+    type: "text",
+    nullable: true
+  })
   content: string;
 
-  @Column("text")
+  @Column({
+    type: "text",
+    nullable: true
+  })
   content_cn: string;
 }

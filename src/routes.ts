@@ -20,6 +20,11 @@ export default [
     action: OauthController.user,
   },
   {
+    path: "/post/create",
+    method: "post",
+    action: PostController.post,
+  },
+  {
     path: "/post/fetch",
     method: "get",
     action: PostController.fetch,
