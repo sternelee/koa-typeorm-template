@@ -1,33 +1,31 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 // 用户
 
 @Entity()
 export class User {
-
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
   @Column()
-  uid: string
+  uid: string;
 
   @Column({
-    default: null
+    default: null,
   })
-  username: string
+  username: string;
 
   @Column()
-  avatar: string
+  avatar: string;
 
   @Column()
-  create_time: Date
+  create_time: Date;
 
   @Column()
-  last_login: Date
+  last_login: Date;
 
   @Column({
-    default: null
+    default: null,
   })
-  email: string
-
+  email: string;
 }

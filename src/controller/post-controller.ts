@@ -2,12 +2,10 @@ import * as Mercury from "@postlight/mercury-parser";
 import { getManager } from "typeorm";
 import Post from "../entity/Post";
 import * as Got from "got";
-import * as translate from "translate";
 import TranslateService from "../service/translate-service";
-import { UserAgent, GoogleKey } from "../contant";
+import { UserAgent } from "../contant";
 
 const Uri = "https://app.dailynow.co/";
-translate.key = GoogleKey;
 
 export default class PostController {
   static async fetch(ctx) {

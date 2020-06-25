@@ -1,7 +1,7 @@
-import { Context } from 'koa'
+import { Context } from "koa";
 
 export default class HomeService {
   static hello() {
-    return new Promise(resolve => resolve('hello koa apps'))
+    return new Promise((resolve) => resolve("hello koa apps"));
   }
 }

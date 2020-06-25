@@ -1,28 +1,28 @@
-import { Context } from 'koa'
-import axios from 'axios'
-import grantConf from '../config/grant-conf'
+import { Context } from "koa";
+import axios from "axios";
+import grantConf from "../config/grant-conf";
 
-const github = grantConf.github
+const github = grantConf.github;
 
 export default class GithubService {
-  static async token (code) {
+  static async token(code) {
     const { data } = await axios({
       url: `https://github.com/login/oauth/access_token?client_id=${github.key}&client_secret=${github.secret}&code=${code}`,
-      method: 'POST',
+      method: "POST",
       headers: {
-        accept: 'application/json'
-      }
-    })
-    return data
+        accept: "application/json",
+      },
+    });
+    return data;
   }
-  static async user (token) {
+  static async user(token) {
     const { data } = await axios({
-      url: 'https://api.github.com/user',
-      method: 'GET',
+      url: "https://api.github.com/user",
+      method: "GET",
       headers: {
-        Authorization: `${token.token_type} ${token.access_token}`
-      }
-    })
-    return data
+        Authorization: `${token.token_type} ${token.access_token}`,
+      },
+    });
+    return data;
   }
 }

@@ -1,12 +1,12 @@
 import * as Got from "got";
-import { UserAgent } from '../contant'
+import { UserAgent } from "../contant";
 
 const Uri = "https://app.dailynow.co/";
 const cgot = Got.extend({
   prefixUrl: Uri,
   headers: {
-    'user-agent': UserAgent
-  }
+    "user-agent": UserAgent,
+  },
 });
 
 export default class DailyController {
@@ -37,9 +37,7 @@ export default class DailyController {
 
   static async graphql(ctx) {
     const { query, variables } = ctx.request.query;
-    const res = await cgot(
-      `graphql?query=${query}&variables=${variables}`
-    );
+    const res = await cgot(`graphql?query=${query}&variables=${variables}`);
     ctx.body = res.body;
   }
 }

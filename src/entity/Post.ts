@@ -1,41 +1,39 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 // 文章
 
 @Entity()
 export default class Post {
-
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
   @Column()
-  pid: string
+  pid: string;
 
   @Column()
-  author: string
+  author: string;
 
   @Column()
-  date: Date
+  date: Date;
 
   @Column()
-  title: string
+  title: string;
 
   @Column()
-  title_cn: string
+  title_cn: string;
 
   @Column()
-  lead_image_url: string
+  lead_image_url: string;
 
   @Column()
-  word_count: number
+  word_count: number;
 
   @Column()
-  url: string
+  url: string;
 
   @Column("text")
-  content: string
+  content: string;
 
   @Column("text")
-  content_cn: string
-
+  content_cn: string;
 }
