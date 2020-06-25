@@ -30,11 +30,6 @@ export default [
     action: PostController.fetch,
   },
   {
-    path: "/daily/me",
-    method: "get",
-    action: DailyController.me,
-  },
-  {
     path: "/daily/popular",
     method: "get",
     action: DailyController.popular,
