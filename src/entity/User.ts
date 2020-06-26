@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 // 用户
 
 @Entity()
-export class User {
+export default class User {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -11,19 +11,16 @@ export class User {
   uid: string;
 
   @Column({
-    default: null,
     nullable: true,
   })
   platform: string;
 
   @Column({
-    default: null,
     nullable: true,
   })
   username: string;
 
   @Column({
-    default: null,
     nullable: true,
   })
   avatar: string;
@@ -31,12 +28,36 @@ export class User {
   @Column()
   create_time: Date;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   last_login: Date;
 
   @Column({
-    default: null,
     nullable: true,
   })
   email: string;
+
+  @Column({
+    nullable: true,
+  })
+  phone: string;
+
+  @Column({
+    default: "",
+    type: "text"
+  })
+  tags: string;
+
+  @Column({
+    default: "",
+    type: "text"
+  })
+  pubs: string;
+
+  @Column({
+    default: "",
+    type: "text"
+  })
+  favs: string;
 }

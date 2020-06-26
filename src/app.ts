@@ -10,31 +10,31 @@ import * as koaSession from "koa-session";
 import * as grant from "grant-koa";
 import { createConnection } from "typeorm";
 import { Server as WsServer } from "ws";
-import { ApolloServer, gql } from "apollo-server-koa";
+// import { ApolloServer, gql } from "apollo-server-koa";
 import AppRoutes from "./routes";
 import messageSocket from "./message";
 import grantConf from "./config/grant-conf";
 
-const typeDefs = gql`
-  type Query {
-    hello: String
-  }
-`;
+// const typeDefs = gql`
+//   type Query {
+//     hello: String
+//   }
+// `;
 
-const resolvers = {
-  Query: {
-    hello: () => "Hello world!",
-  },
-};
+// const resolvers = {
+//   Query: {
+//     hello: () => "Hello world!",
+//   },
+// };
 
-const apolloServer = new ApolloServer({ typeDefs, resolvers });
+// const apolloServer = new ApolloServer({ typeDefs, resolvers });
 
 // 使用 typeorm 连接数据库
 createConnection()
   .then(async (connection) => {
     const app = new Koa();
 
-    apolloServer.applyMiddleware({ app });
+    // apolloServer.applyMiddleware({ app });
 
     app.keys = ["grant"];
     app.use(koaSession(app));
@@ -63,8 +63,11 @@ createConnection()
       server,
     });
     messageSocket(wss, app);
+    // console.log(
+    //   `应用启动成功 端口:${port}, 而 graphql 运行在 ${apolloServer.graphqlPath}`
+    // );
     console.log(
-      `应用启动成功 端口:${port}, 而 graphql 运行在 ${apolloServer.graphqlPath}`
+      `应用启动成功 端口:${port}`
     );
   })
   .catch((error) => console.log("TypeORM connection error: ", error));

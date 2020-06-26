@@ -20,9 +20,9 @@ export default class PostController {
         data: hasPost[0],
       });
     }
-    let realUrl = ''
+    let realUrl = "";
     if (link) {
-      realUrl = link
+      realUrl = link;
     } else {
       const resBody = await Got(`${Uri}r/${pid}`, {
         followRedirect: false,
@@ -55,7 +55,14 @@ export default class PostController {
         post.title_cn = await TranslateService.string(data.title);
         await repo.save(post);
       }
-      data = hasPost.length ? {...post, pid: pid, title: hasPost[0].title, title_cn: hasPost[0].title_cn} : post
+      data = hasPost.length
+        ? {
+            ...post,
+            pid: pid,
+            title: hasPost[0].title,
+            title_cn: hasPost[0].title_cn,
+          }
+        : post;
       return (ctx.body = {
         code: 0,
         result: "ok",
@@ -70,20 +77,20 @@ export default class PostController {
   }
 
   // 批量创建文章的标题，中文标题等
-  static async post (ctx) {
+  static async post(ctx) {
     const { list } = ctx.request.body;
     const repo = getManager().getRepository(Post);
-    const datas = []
+    const datas = [];
     for (let i = 0; i < list.length; i++) {
-      const pid = list[i].id
-      const title = list[i].title
+      const pid = list[i].id;
+      const title = list[i].title;
       const hasPost = await repo.find({ where: { pid }, take: 1 });
       if (hasPost.length) {
         datas.push({
           id: pid,
-          title: hasPost[0].title_cn
-        })
-        continue
+          title: hasPost[0].title_cn,
+        });
+        continue;
       }
       const post = new Post();
       post.pid = pid;
@@ -91,14 +98,27 @@ export default class PostController {
       post.title_cn = await TranslateService.string(title);
       datas.push({
         id: pid,
-        title: post.title_cn
-      })
+        title: post.title_cn,
+      });
       await repo.save(post);
     }
     return (ctx.body = {
       code: 0,
       result: "ok",
       data: datas,
+    });
+  }
+
+  static async find(ctx) {
+    const { ids = [] } = ctx.request.query;
+    const repo = getManager().getRepository(Post);
+    const where = ids.map((v) => ({ id: v }));
+    console.log('where', where)
+    const data = await repo.find({ where });
+    return (ctx.body = {
+      code: 0,
+      result: "ok",
+      data,
     });
   }
 }

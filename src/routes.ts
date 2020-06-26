@@ -2,6 +2,7 @@ import HomeController from "./controller/home-controller";
 import OauthController from "./controller/oauth-controller";
 import PostController from "./controller/post-controller";
 import DailyController from "./controller/daily-controller";
+import UserController from "./controller/user-controller";
 
 export default [
   {
@@ -30,6 +31,11 @@ export default [
     action: PostController.fetch,
   },
   {
+    path: "/post/find",
+    method: "get",
+    action: PostController.find,
+  },
+  {
     path: "/daily/popular",
     method: "get",
     action: DailyController.popular,
@@ -52,6 +58,16 @@ export default [
   {
     path: "/daily/graphql",
     method: "get",
-    action: DailyController,
+    action: DailyController.graphql,
   },
+  {
+    path: "/user/me",
+    method: "get",
+    action: UserController.get
+  },
+  {
+    path: "/user/me",
+    method: "post",
+    action: UserController.post
+  }
 ];
