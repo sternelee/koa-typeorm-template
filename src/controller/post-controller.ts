@@ -1,41 +1,46 @@
-import * as Mercury from "@postlight/mercury-parser";
+// import * as Mercury from "@postlight/mercury-parser";
 import { getManager } from "typeorm";
 import Post from "../entity/Post";
 import * as Got from "got";
 import TranslateService from "../service/translate-service";
-import { UserAgent } from "../contant";
+// import { UserAgent } from "../contant";
 
-const Uri = "https://app.dailynow.co/";
+// const Uri = "https://app.dailynow.co/";
 
 export default class PostController {
   // 爬取文章的主体内容
   static async fetch(ctx) {
-    const { pid, type = "markdown", link = null } = ctx.request.query;
+    const { pid, type = "markdown", link = '' } = ctx.request.query;
     const repo = getManager().getRepository(Post);
-    const hasPost = await repo.find({ where: { pid }, take: 1 });
-    if (hasPost.length && hasPost[0].content) {
+    const hasPost = await repo.findOne({ pid });
+    if (hasPost && hasPost.content) {
       return (ctx.body = {
         code: 0,
         result: "ok",
-        data: hasPost[0],
+        data: hasPost,
       });
     }
-    let realUrl = "";
-    if (link) {
-      realUrl = link;
-    } else {
-      const resBody = await Got(`${Uri}r/${pid}`, {
-        followRedirect: false,
-      });
-      const body = resBody.body;
-      realUrl = body.split("URL=")[1].split('"')[0];
-    }
-    let data = await Mercury.parse(realUrl, {
-      contentType: type,
-      headers: {
-        "user-agent": UserAgent,
-      },
-    });
+    // let realUrl = "";
+    // if (link) {
+    //   realUrl = link;
+    // } else {
+    //   const resBody = await Got(`${Uri}r/${pid}`, {
+    //     followRedirect: false,
+    //   });
+    //   const body = resBody.body;
+    //   realUrl = body.split("URL=")[1].split('"')[0];
+    // }
+    // let data = await Mercury.parse(realUrl, {
+    //   contentType: type,
+    //   headers: {
+    //     "user-agent": UserAgent,
+    //   },
+    // });
+    // 换成在谷歌云内爬取
+    const resBody = await Got(
+      `http://sterne.me:3006/post/daily?pid=${pid}&link=${link}&type=${type}`
+    );
+    let data = JSON.parse(resBody.body)
     if (data) {
       const post = new Post();
       post.author = data.author || "";
@@ -45,7 +50,7 @@ export default class PostController {
       post.url = data.url;
       post.content = data.content;
       post.content_cn = await TranslateService.markdown(data.content);
-      if (hasPost.length) {
+      if (hasPost) {
         // 更新，一般已经有了pid,标题和中文标题
         await repo.update({ pid }, post);
       } else {
@@ -54,14 +59,14 @@ export default class PostController {
         post.title = data.title;
         post.title_cn = await TranslateService.string(data.title);
         const newData = await repo.save(post);
-        post.id = newData.id
+        post.id = newData.id;
       }
-      data = hasPost.length
+      data = hasPost
         ? {
             ...post,
             pid: pid,
-            title: hasPost[0].title,
-            title_cn: hasPost[0].title_cn,
+            title: hasPost.title,
+            title_cn: hasPost.title_cn,
           }
         : post;
       return (ctx.body = {
