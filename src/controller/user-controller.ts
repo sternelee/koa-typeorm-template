@@ -71,13 +71,13 @@ export default class UserController {
         user.phone = phone;
       }
       if (tag) {
-        user.tags = UserService.setStrs(user.tags, tag);
+        user.tags = UserService.setStrs(hasUser.tags, tag);
       }
       if (pub) {
-        user.pubs = UserService.setStrs(user.pubs, pub);
+        user.pubs = UserService.setStrs(hasUser.pubs, pub);
       }
       if (fav) {
-        user.favs = UserService.setStrs(user.favs, fav);
+        user.favs = UserService.setStrs(hasUser.favs, fav);
       }
       await repo.update({ uid, platform }, user);
       return (ctx.body = {
