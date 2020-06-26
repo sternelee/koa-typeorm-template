@@ -53,7 +53,8 @@ export default class PostController {
         post.pid = pid;
         post.title = data.title;
         post.title_cn = await TranslateService.string(data.title);
-        await repo.save(post);
+        const newData = await repo.save(post);
+        post.id = newData.id
       }
       data = hasPost.length
         ? {
