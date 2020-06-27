@@ -6,14 +6,13 @@ export default class UserController {
   static async get(ctx) {
     const { uid, platform } = ctx.request.query;
     const repo = getManager().getRepository(User);
-    const hasUser = await repo.find({ where: { uid, platform }, take: 1 });
-    if (hasUser.length) {
-      const user = hasUser[0];
+    const hasUser = await repo.findOne({ uid, platform });
+    if (hasUser) {
       const data = {
-        ...user,
-        tags: UserService.str2arr(user.tags),
-        pubs: UserService.str2arr(user.pubs),
-        favs: UserService.str2arr(user.favs),
+        ...hasUser,
+        tags: UserService.str2arr(hasUser.tags),
+        pubs: UserService.str2arr(hasUser.pubs),
+        favs: UserService.str2arr(hasUser.favs),
       };
       await repo.update({ uid, platform }, { last_login: new Date() });
       return (ctx.body = {

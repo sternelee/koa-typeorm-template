@@ -63,10 +63,8 @@ export default class PostController {
       }
       data = hasPost
         ? {
-            ...post,
-            pid: pid,
-            title: hasPost.title,
-            title_cn: hasPost.title_cn,
+            ...hasPost,
+            ...post
           }
         : post;
       return (ctx.body = {

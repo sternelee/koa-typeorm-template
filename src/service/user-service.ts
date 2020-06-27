@@ -3,11 +3,11 @@ export default class UserService {
     return str ? str.split(",") : [];
   }
   static setStrs(arr: string, item: string) {
-    let list = arr.split(",");
+    let list = arr ? arr.split(",") : [];
     if (list.includes(item)) {
       list = list.filter((v) => v !== item);
     } else {
-      list.splice(0, 1, item);
+      list.push(item);
     }
     return list.join(",");
   }
