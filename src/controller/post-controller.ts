@@ -114,9 +114,9 @@ export default class PostController {
   }
 
   static async find(ctx) {
-    const { ids = [] } = ctx.request.query;
+    const { ids = '' } = ctx.request.query;
     const repo = getManager().getRepository(Post);
-    const where = ids.map((v) => ({ id: v }));
+    const where = ids ? ids.split(',').map((v) => ({ id: v })) : [];
     const data = await repo.find({ where });
     return (ctx.body = {
       code: 0,

@@ -1,11 +1,13 @@
 // GET http://127.0.0.1:3006/user/me?uid=123456&platform=wchat HTTP/1.1
 
 
-POST http://127.0.0.1:3006/user/me?uid=123456&platform=wchat HTTP/1.1
-content-type: application/json
+# POST http://127.0.0.1:3006/user/me?uid=123456&platform=wchat HTTP/1.1
+# content-type: application/json
 
-{
-    "uid": "123456",
-    "platform": "wchat",
-    "tag": "vue"
-}
+# {
+#     "uid": "123456",
+#     "platform": "wchat",
+#     "tag": "vue"
+# }
+
+GET http://127.0.0.1:3006/post/find HTTP/1.1
