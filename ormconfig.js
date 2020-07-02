@@ -3,6 +3,7 @@ module.exports = {
   "database": "./sqlite.db",
   "synchronize": true,
   "logging": false,
+  "cache": true,
   "entities": [
      "src/entity/**/*.ts"
   ],

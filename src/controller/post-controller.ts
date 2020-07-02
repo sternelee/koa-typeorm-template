@@ -44,7 +44,7 @@ export default class PostController {
     if (data) {
       const post = new Post();
       post.author = data.author || "";
-      post.date = data.date_published || "";
+      post.date = data.date_published || null;
       post.lead_image_url = data.lead_image_url || "";
       post.word_count = data.word_count;
       post.url = data.url;
@@ -84,28 +84,50 @@ export default class PostController {
   static async post(ctx) {
     const { list } = ctx.request.body;
     const repo = getManager().getRepository(Post);
-    const datas = [];
-    for (let i = 0; i < list.length; i++) {
-      const pid = list[i].id;
-      const title = list[i].title;
-      const hasPost = await repo.find({ where: { pid }, take: 1 });
-      if (hasPost.length) {
-        datas.push({
-          id: pid,
-          title: hasPost[0].title_cn,
-        });
-        continue;
-      }
+    let datas = [];
+    // TODO: 需要过滤已保存的，并按照原来的列表顺序返回
+    const bigDatas: any = {};
+    const pids = list.map(v => v.id);
+    const hasPosts = await repo.find({ where: pids.map(v => ({pid: v})), cache: true });
+    const hasPids = hasPosts.map(v => {
+      bigDatas[v.pid] = v;
+      return v.pid
+    });
+    const lastList = list.filter(v => hasPids.indexOf(v.id) < 0);
+    const lastTitles = lastList.map(v => v.title).join('$$$$');
+    let lastTitleCns = await TranslateService.string(lastTitles);
+    lastTitleCns = lastTitleCns.split('$$$$');
+    for (let i = 0; i < lastList.length; i++) {
+      const pid = lastList[i].id;
       const post = new Post();
       post.pid = pid;
-      post.title = title;
-      post.title_cn = await TranslateService.string(title);
-      datas.push({
-        id: pid,
-        title: post.title_cn,
-      });
-      await repo.save(post);
+      post.title = lastList[i].title;
+      post.title_cn = lastList;
+      const newPost = await repo.save(post);
+      bigDatas[pid] = newPost;
     }
+    datas = list.map(v => bigDatas[v.id]);
+    // for (let i = 0; i < list.length; i++) {
+    //   const pid = list[i].id;
+    //   const title = list[i].title;
+    //   const hasPost = await repo.find({ where: { pid }, take: 1 });
+    //   if (hasPost.length) {
+    //     datas.push({
+    //       id: pid,
+    //       title: hasPost[0].title_cn,
+    //     });
+    //     continue;
+    //   }
+    //   const post = new Post();
+    //   post.pid = pid;
+    //   post.title = title;
+    //   post.title_cn = await TranslateService.string(title);
+    //   datas.push({
+    //     id: pid,
+    //     title: post.title_cn,
+    //   });
+    //   await repo.save(post);
+    // }
     return (ctx.body = {
       code: 0,
       result: "ok",

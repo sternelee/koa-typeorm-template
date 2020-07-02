@@ -25,7 +25,9 @@ export default class User {
   })
   avatar: string;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   create_time: Date;
 
   @Column({

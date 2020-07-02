@@ -20,9 +20,10 @@ export default class TranslateService {
       let index = 0
       content = content.replace(/(\${4})/g, function (match, captch) {
         index += 1
-        return caches[index -1];
+        return caches[index -1] + ' ';
       });
-      return content;
+      // TODO: 中文要用转码后的utf8字段来替换
+      return content.replace(/\【/g, '[').replace(/\】/g, ']').replace(/\（/g, '(').replace(/\）/g, ')').replace(/\！/, '!');
     } catch (err) {
       console.log(err)
       return null

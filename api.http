@@ -10,4 +10,11 @@
 #     "tag": "vue"
 # }
 
-GET http://127.0.0.1:3006/post/find HTTP/1.1
+# GET http://127.0.0.1:3006/post/find HTTP/1.1
+
+POST http://127.0.0.1:3006/post/create HTTP/1.1
+content-type: application/json
+
+{
+  "list": [{"id": "f0a09b4da1696a7d5aa9715a51e47bc1", "title": ""}, {"id": "055889acf29f7e71eb26951266dd325b", "title": ""}, {"id": "db0f3ae8edd8053975027ff7b71ae031", "title": ""}, {"id": "86d84195387314ecab82c3a996fd6923", "title": ""}]
+}
