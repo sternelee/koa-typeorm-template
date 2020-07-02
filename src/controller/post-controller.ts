@@ -102,7 +102,7 @@ export default class PostController {
       const post = new Post();
       post.pid = pid;
       post.title = lastList[i].title;
-      post.title_cn = lastList;
+      post.title_cn = lastTitleCns[i];
       const newPost = await repo.save(post);
       bigDatas[pid] = newPost;
     }
