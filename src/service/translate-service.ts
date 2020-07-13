@@ -23,7 +23,7 @@ export default class TranslateService {
         return caches[index -1] + ' ';
       });
       // TODO: 中文要用转码后的utf8字段来替换
-      return content.replace(/\【/g, '[').replace(/\】/g, ']').replace(/\（/g, '(').replace(/\）/g, ')').replace(/\！/, '!');
+      return content.replace(/\【/g, '[').replace(/\】/g, ']').replace(/\（/g, '(').replace(/\）/g, ')').replace(/！/g, '!').replace(/\] \(/g, '](');
     } catch (err) {
       console.log(err)
       return null

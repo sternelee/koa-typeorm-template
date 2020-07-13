@@ -107,6 +107,14 @@ export default class PostController {
       bigDatas[pid] = newPost;
     }
     datas = list.map(v => bigDatas[v.id]);
+    // 先新版本无法上架，先改回旧版
+    // datas = list.map(v => {
+    //   const data = bigDatas[v.id]
+    //   return {
+    //     id: data.pid,
+    //     title: data.title_cn
+    //   }
+    // });
     // for (let i = 0; i < list.length; i++) {
     //   const pid = list[i].id;
     //   const title = list[i].title;
