@@ -82,7 +82,7 @@ const cgot = Got.extend({
 });
 
 export default class WeeklyController {
-  static async fetch (ctx) {
+  static async fetch(ctx) {
     const { id = "latest", cid = 1, title = "" } = ctx.request.query;
     const mapData = WeekMap[cid];
     if (!mapData) {
@@ -91,7 +91,7 @@ export default class WeeklyController {
         data: null,
       });
     }
-    let content = '';
+    let content = "";
     let url = mapData.uri + "/issues/" + id;
     const REG_STYLE = /( style="[^"]+")/gi;
     const REG_TARGET = /( target="[^"]+")/gi;
@@ -259,21 +259,17 @@ export default class WeeklyController {
     weekly.cid = cid;
     weekly.content = content;
     weekly.content_cn = content_cn;
-    weekly.title = title;
-    weekly.title_cn = await TranslateService.string(title);
-    weekly.url = url;
+    weekly.title = $title;
+    weekly.title_cn = await TranslateService.string($title);
+    weekly.url = mapData.uri + "/issues/" + pid;
     const data = await repo.save(weekly);
     return (ctx.body = data);
   }
 
   static async find(ctx) {
-    const { cid = '1', pid } = ctx.request.query;
+    const { cid = "1", pid } = ctx.request.query;
     const repo = getManager().getRepository(Weekly);
     const data = await repo.findOne({ cid, pid });
-    return (ctx.body = {
-      code: 0,
-      result: "ok",
-      data,
-    });
+    return (ctx.body = data);
   }
 }
