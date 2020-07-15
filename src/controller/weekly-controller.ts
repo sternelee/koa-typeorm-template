@@ -267,9 +267,9 @@ export default class WeeklyController {
   }
 
   static async find(ctx) {
-    const { cid = "1", pid } = ctx.request.query;
+    const { cid = "1", pid = "" } = ctx.request.query;
     const repo = getManager().getRepository(Weekly);
-    const data = await repo.findOne({ cid, pid });
+    const data = await repo.find({where: {cid, pid}, order: {pid: "ASC"}, take: 1});
     return (ctx.body = data);
   }
 }
