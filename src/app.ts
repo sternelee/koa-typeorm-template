@@ -41,7 +41,7 @@ createConnection()
     app.use(grant(grantConf));
 
     const router = new Router();
-    const port = process.env.PORT || 3006;
+    const port = process.env.PORT || 3007;
 
     //路由
     AppRoutes.forEach((route) =>

@@ -2,6 +2,7 @@ import HomeController from "./controller/home-controller";
 import OauthController from "./controller/oauth-controller";
 import PostController from "./controller/post-controller";
 import UserController from "./controller/user-controller";
+import WeeklyController from "./controller/weekly-controller";
 
 export default [
   {
@@ -43,5 +44,15 @@ export default [
     path: "/user/me",
     method: "post",
     action: UserController.post
+  },
+  {
+    path: "/weekly/fetch",
+    method: "get",
+    action: WeeklyController.fetch
+  },
+  {
+    path: "/weekly/find",
+    method: "get",
+    action: WeeklyController.find
   }
 ];

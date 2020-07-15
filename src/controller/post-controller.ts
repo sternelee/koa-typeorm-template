@@ -10,7 +10,7 @@ import TranslateService from "../service/translate-service";
 export default class PostController {
   // 爬取文章的主体内容
   static async fetch(ctx) {
-    const { pid, type = "markdown", link = '' } = ctx.request.query;
+    const { pid, type = "markdown", link = '', cid = '1' } = ctx.request.query;
     const repo = getManager().getRepository(Post);
     const hasPost = await repo.findOne({ pid });
     if (hasPost && hasPost.content) {
@@ -50,23 +50,13 @@ export default class PostController {
       post.url = data.url;
       post.content = data.content;
       post.content_cn = await TranslateService.markdown(data.content);
-      if (hasPost) {
-        // 更新，一般已经有了pid,标题和中文标题
-        await repo.update({ pid }, post);
-      } else {
-        // 新增
-        post.pid = pid;
-        post.title = data.title;
-        post.title_cn = await TranslateService.string(data.title);
-        const newData = await repo.save(post);
-        post.id = newData.id;
-      }
-      data = hasPost
-        ? {
-            ...hasPost,
-            ...post
-          }
-        : post;
+      post.pid = pid;
+      post.cid = cid;
+      post.title = data.title;
+      post.title_cn = await TranslateService.string(data.title);
+      const newData = await repo.save(post);
+      post.id = newData.id;
+      data = post;
       return (ctx.body = {
         code: 0,
         result: "ok",

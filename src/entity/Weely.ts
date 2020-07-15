@@ -1,27 +1,22 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-// 文章
+// 周报
 
 @Entity()
-export default class Post {
+export default class Weekly {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  pid: string;
-
-  @Column()
   cid: string; // 分类
 
-  @Column({
-    nullable: true
-  })
-  author: string;
+  @Column()
+  pid: string;
 
   @Column({
     nullable: true
   })
-  date: Date;
+  date: string;
 
   @Column()
   title: string;
@@ -30,16 +25,6 @@ export default class Post {
     nullable: true
   })
   title_cn: string;
-
-  @Column({
-    nullable: true
-  })
-  lead_image_url: string;
-
-  @Column({
-    nullable: true
-  })
-  word_count: number;
 
   @Column({
     nullable: true
