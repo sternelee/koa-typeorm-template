@@ -78,6 +78,26 @@ const WeekMap = {
     uri: "https://ma.ttias.be/cronweekly",
     title: "cron.weekly",
   },
+  25: {
+    uri: "https://webtoolsweekly.com",
+    title: "Web Tools Weekly"
+  },
+  26: {
+    uri: "https://this-week-in-rust.org",
+    title: "Rust Weekly"
+  },
+  27: {
+    uri: "https://rust-gamedev.github.io",
+    title: "Rust Game Dev"
+  },
+  28: {
+    uri: "https://androidweekly.net",
+    title: "Android Weekly"
+  },
+  29: {
+    uri: "https://iosdevweekly.com",
+    title: "IOS Dev Weekly"
+  }
 };
 const cgot = Got.extend({
   headers: {
@@ -229,6 +249,13 @@ export default class WeeklyController {
       weekly.url = url;
       const data = await repo.save(weekly);
       return (ctx.body = data);
+    }
+
+    if (String(cid) === "25") {
+      url = `${mapData.uri}/archives/issue-${id}/`;
+      const { body } = await cgot(url);
+      console.log(body)
+      return (ctx.body = body);
     }
 
     const { body } = await cgot(url);
