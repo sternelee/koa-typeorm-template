@@ -83,7 +83,7 @@ const cgot = Got.extend({
 
 export default class WeeklyController {
   static async fetch(ctx) {
-    const { id = "latest", cid = 1, title = "" } = ctx.request.query;
+    let { id = "latest", cid = 1, title = "" } = ctx.request.query;
     const mapData = WeekMap[cid];
     if (!mapData) {
       return (ctx.body = {
@@ -121,7 +121,7 @@ export default class WeeklyController {
       let $content = body.split('"mcnTextContent"')[3].split("</td>")[0];
       $content = $content.replace(/(<br>)/g, "").replace(/(&ldquo;)/g, '"');
       $content = "<div" + $content + "</div>";
-      $title = title || $title;
+      title = title || $title;
       $content = await turndownService.turndown($content);
       const content_cn = await TranslateService.markdown($content);
       weekly.pid = pid;
@@ -129,8 +129,8 @@ export default class WeeklyController {
       weekly.cid = cid;
       weekly.content = content;
       weekly.content_cn = content_cn;
-      weekly.title = $title;
-      weekly.title_cn = await TranslateService.string($title);
+      weekly.title = title;
+      weekly.title_cn = await TranslateService.string(title);
       weekly.url = url;
       const data = await repo.save(weekly);
       return (ctx.body = data);
@@ -149,7 +149,7 @@ export default class WeeklyController {
         .replace(/(<!---->)/g, "")
         .replace(/( target="[^"]+")/gi, "")
         .replace(/\n/g, "");
-      const title = content.match(/issue-title">([^<]+)/)[1];
+      title = title || content.match(/issue-title">([^<]+)/)[1];
       const date = content.match(/issue-date">([^<]+)/)[1];
       const pid = content.match(/issues\/([\d]+)/)[1];
       content = await turndownService.turndown(content);
@@ -171,10 +171,10 @@ export default class WeeklyController {
       url = `${mapData.uri}/issue-${id}/`;
       const { body } = await cgot(url);
       content = body.split('class="newsletter-head"')[1];
-      let title = content.split("</header>")[0];
-      const pid = title.match(/Issue #([\d]+)/)[1];
-      const date = title.match(/pubdate>([^<]+)/)[1];
-      title = `Issue #${pid}`;
+      let $title = content.split("</header>")[0];
+      const pid = $title.match(/Issue #([\d]+)/)[1];
+      const date = $title.match(/pubdate>([^<]+)/)[1];
+      title = title || `Issue #${pid}`;
       content = content.split("<aside")[0];
       content = content
         .replace(/(\t|\n)/g, "")
@@ -201,7 +201,7 @@ export default class WeeklyController {
       const { body } = await cgot(url);
       const date = body.match(/article:published_time" content="([^"]+)/)[1];
       const titles = body.match(/cron.weekly issue #([\d]+): ([^<]+)/);
-      const title = titles[2];
+      title = title || titles[2];
       const pid = titles[1];
       content = body.split("content blog-content cronweekly-content")[1];
       content = content.split('<aside class="hidden')[0];
@@ -237,7 +237,7 @@ export default class WeeklyController {
 
     const date = $title.split(": ")[1];
     const pid = $title.match(/( [\d]+):/)[1].trim();
-    $title = title || $title;
+    title = title || $title;
 
     content = content
       .replace(REG_TBODY, "")
@@ -259,8 +259,8 @@ export default class WeeklyController {
     weekly.cid = cid;
     weekly.content = content;
     weekly.content_cn = content_cn;
-    weekly.title = $title;
-    weekly.title_cn = await TranslateService.string($title);
+    weekly.title = title;
+    weekly.title_cn = await TranslateService.string(title);
     weekly.url = mapData.uri + "/issues/" + pid;
     const data = await repo.save(weekly);
     return (ctx.body = data);
@@ -269,7 +269,9 @@ export default class WeeklyController {
   static async find(ctx) {
     const { cid = "1", pid = "" } = ctx.request.query;
     const repo = getManager().getRepository(Weekly);
-    const data = await repo.find({where: {cid, pid}, order: {pid: "ASC"}, take: 1});
+    const where = pid ? { cid, pid } : { cid };
+    let data: any = await repo.find({ where, order: { pid: "DESC" }, take: 1 });
+    data = data.length ? data[0] : {};
     return (ctx.body = data);
   }
 }
