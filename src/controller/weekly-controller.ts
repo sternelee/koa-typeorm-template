@@ -5,6 +5,7 @@ import * as TurndownService from "turndown";
 import TranslateService from "../service/translate-service";
 import Weekly from "../entity/Weely";
 import { getManager } from "typeorm";
+import * as marked from "marked";
 
 const turndownService = new TurndownService();
 
@@ -58,18 +59,22 @@ const WeekMap = {
     title: "Postgres Weekly",
   },
   13: {
+    uri: "https://denoweekly.com",
+    title: "Deno Weekly"
+  },
+  21: {
     uri: "https://pycoders.com", // 跳转链接需要特殊处理
     title: "Python Weekly",
   },
-  14: {
+  22: {
     uri: "https://news.vuejs.org",
     title: "Vuejs News",
   },
-  15: {
+  23: {
     uri: "https://css-weekly.com",
     title: "CSS Weekly",
   },
-  16: {
+  24: {
     uri: "https://ma.ttias.be/cronweekly",
     title: "cron.weekly",
   },
@@ -105,10 +110,11 @@ export default class WeeklyController {
     const REG_N = /\n/g; // 匹配去掉换行符
     const REG_NAME = /<p class="name"[^\/]+(\/p>)/g; // 匹配去掉作者
     const REG_READ = `Read on the Web</a></p></div>`; // 去掉原链接跳转
+    const REG_MB_AUTHER = /<div><img src="https:\/\/cooperpress.s3[^<]+<\/div>/g; // 过滤mobile的用户信息条
 
     let weekly = new Weekly();
     const repo = getManager().getRepository(Weekly);
-    if (cid === String(13)) {
+    if (String(cid) === '21') {
       // python
       if (id === "latest") {
         url = mapData.uri + "/latest";
@@ -136,7 +142,7 @@ export default class WeeklyController {
       return (ctx.body = data);
     }
 
-    if (cid === String(14)) {
+    if (String(cid) === '22') {
       // Vue
       if (id === "latest") {
         url = mapData.uri;
@@ -166,7 +172,7 @@ export default class WeeklyController {
       return (ctx.body = data);
     }
 
-    if (cid === String(15)) {
+    if (String(cid) === '23') {
       // CSS
       url = `${mapData.uri}/issue-${id}/`;
       const { body } = await cgot(url);
@@ -195,7 +201,7 @@ export default class WeeklyController {
       return (ctx.body = data);
     }
 
-    if (cid === String(16)) {
+    if (String(cid) === '24') {
       // cron
       url = `${mapData.uri}/issue-${id}/`;
       const { body } = await cgot(url);
@@ -252,6 +258,9 @@ export default class WeeklyController {
       .replace(/<div><\/div>/g, "")
       .replace(REG_NAME, "")
       .split(REG_READ)[1];
+    if (String(cid) === '5') {
+      content = content.replace(REG_MB_AUTHER, '')
+    }
     content = await turndownService.turndown(content);
     const content_cn = await TranslateService.markdown(content);
     weekly.pid = pid;
@@ -267,11 +276,18 @@ export default class WeeklyController {
   }
 
   static async find(ctx) {
-    const { cid = "1", pid = "" } = ctx.request.query;
+    const { cid = "1", pid = "", type = "md" } = ctx.request.query;
     const repo = getManager().getRepository(Weekly);
     const where = pid ? { cid, pid } : { cid };
     let data: any = await repo.find({ where, order: { pid: "DESC" }, take: 1 });
     data = data.length ? data[0] : {};
+    if (type === "html" && data.content) {
+      data = {
+        ...data,
+        content: marked(data.content),
+        content_cn: data.content_cn ? marked(data.content_cn): null
+      }
+    }
     return (ctx.body = data);
   }
 }
