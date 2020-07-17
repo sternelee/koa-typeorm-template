@@ -14,6 +14,7 @@ import { Server as WsServer } from "ws";
 import AppRoutes from "./routes";
 import messageSocket from "./message";
 import grantConf from "./config/grant-conf";
+import * as fs from "fs";
 
 // const typeDefs = gql`
 //   type Query {
@@ -48,9 +49,8 @@ createConnection()
       router[route.method](route.path, route.action)
     );
 
-    // 静态资源目录对于相对入口文件app.js的路径
-    const staticPath = "../public";
-    app.use(koaStatic(path.join(__dirname, staticPath)));
+    // 静态资源目录对于相对入口文件app.js的路径\
+    app.use(koaStatic(path.join(__dirname, "../page/build/")));
 
     // 中间件
     app.use(json());
@@ -58,6 +58,10 @@ createConnection()
     app.use(bodyParser());
     app.use(router.routes());
     app.use(router.allowedMethods());
+    app.use(async (ctx, next) => {
+      ctx.set("Content-Type", "text/html");
+      ctx.body = fs.createReadStream("./page/build/index.html");
+    });
     let server = app.listen(port);
     const wss = new WsServer({
       server,
