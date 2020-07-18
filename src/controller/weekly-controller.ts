@@ -60,7 +60,7 @@ const WeekMap = {
   },
   13: {
     uri: "https://denoweekly.com",
-    title: "Deno Weekly"
+    title: "Deno Weekly",
   },
   21: {
     uri: "https://pycoders.com", // 跳转链接需要特殊处理
@@ -80,24 +80,24 @@ const WeekMap = {
   },
   25: {
     uri: "https://webtoolsweekly.com",
-    title: "Web Tools Weekly"
+    title: "Web Tools Weekly",
   },
   26: {
     uri: "https://this-week-in-rust.org",
-    title: "Rust Weekly"
+    title: "Rust Weekly",
   },
   27: {
     uri: "https://rust-gamedev.github.io",
-    title: "Rust Game Dev"
+    title: "Rust Game Dev",
   },
   28: {
     uri: "https://androidweekly.net",
-    title: "Android Weekly"
+    title: "Android Weekly",
   },
   29: {
     uri: "https://iosdevweekly.com",
-    title: "IOS Dev Weekly"
-  }
+    title: "IOS Dev Weekly",
+  },
 };
 const cgot = Got.extend({
   headers: {
@@ -120,8 +120,8 @@ export default class WeeklyController {
     let url = mapData.uri + "/issues/" + id;
     const REG_STYLE = /( style="[^"]+")/gi;
     const REG_TARGET = /( target="[^"]+")/gi;
-    // const REG_CLASS = /( class="[^"]+")/ig;
-    // const REG_TABLE = /<(\/)?table[^>]*>/ig;
+    const REG_CLASS = /( class="[^"]+")/gi;
+    const REG_TABLE = /<(\/)?table[^>]*>/gi;
     const REG_ID = /( id="[^"]+")/gi;
     const REG_TBODY = /<(\/)?tbody>/gi;
     const REG_TR = /<(\/)?tr>/gi;
@@ -134,7 +134,7 @@ export default class WeeklyController {
 
     let weekly = new Weekly();
     const repo = getManager().getRepository(Weekly);
-    if (String(cid) === '21') {
+    if (String(cid) === "21") {
       // python
       if (id === "latest") {
         url = mapData.uri + "/latest";
@@ -144,40 +144,20 @@ export default class WeeklyController {
       const pid = $$title.split("#")[1];
       let $title = body.match(/"description" content="([^.]+)/)[1];
       const date = $title.split("published ")[1];
-      let $content = body.split('"mcnTextContent"')[3].split("</td>")[0];
-      $content = $content.replace(/(<br>)/g, "").replace(/(&ldquo;)/g, '"');
-      $content = "<div" + $content + "</div>";
-      title = title || $title;
-      $content = await turndownService.turndown($content);
-      const content_cn = await TranslateService.markdown($content);
-      weekly.pid = pid;
-      weekly.date = date;
-      weekly.cid = cid;
-      weekly.content = content;
-      weekly.content_cn = content_cn;
-      weekly.title = title;
-      weekly.title_cn = await TranslateService.string(title);
-      weekly.url = url;
-      const data = await repo.save(weekly);
-      return (ctx.body = data);
-    }
-
-    if (String(cid) === '22') {
-      // Vue
-      if (id === "latest") {
-        url = mapData.uri;
-      }
-      const { body } = await cgot(url);
-      content = body.split('slide-transition">')[1];
-      content = content.split('<div class="issues-nav">')[0];
+      content = body.split('"mcnTextContent"')[3].split("</td>")[0];
       content = content
-        .replace(/( data-v-[^>]+)/g, "")
-        .replace(/(<!---->)/g, "")
-        .replace(/( target="[^"]+")/gi, "")
-        .replace(/\n/g, "");
-      title = title || content.match(/issue-title">([^<]+)/)[1];
-      const date = content.match(/issue-date">([^<]+)/)[1];
-      const pid = content.match(/issues\/([\d]+)/)[1];
+        .replace(REG_STYLE, "")
+        .replace(/(<br>)/g, "")
+        .replace(/(&ldquo;)/g, '"')
+        .replace(REG_N, "")
+        .replace(REG_TARGET, "")
+        .replace(REG_NOTES, "")
+        .replace(REG_N, "")
+        .replace(/   /g, "");
+      content = "<div" + content + "</div>";
+      title = title || $title;
+      console.log(title);
+      console.log(content);
       content = await turndownService.turndown(content);
       const content_cn = await TranslateService.markdown(content);
       weekly.pid = pid;
@@ -192,7 +172,47 @@ export default class WeeklyController {
       return (ctx.body = data);
     }
 
-    if (String(cid) === '23') {
+    if (String(cid) === "22") {
+      // Vue
+      if (id === "latest") {
+        url = mapData.uri;
+      }
+      const { body } = await cgot(url);
+      content = body.split('slide-transition">')[1];
+      content = content.split('<div class="issues-nav">')[0];
+      content = content
+        .replace(/( data-v-[^>]+)/g, "")
+        .replace(/(<!---->)/g, "")
+        .replace(/( target="[^"]+")/gi, "")
+        .replace(REG_N, "")
+        .replace(REG_TARGET, "")
+        .replace(REG_NOTES, "")
+        .replace(/<div class="story-author[^\/]+\/div>/g, "")
+        .replace(/<a href="\/search[^<]+<\/a>/g, "")
+        .replace(/<div class="tags"[^<]+<\/div>/g, "")
+        .replace(/   /g, "")
+        .replace(/\n/g, "");
+      title = title || content.match(/issue-title">([^<]+)/)[1];
+      const date = content.match(/issue-date">([^<]+)/)[1];
+      const pid = content.match(/issues\/([\d]+)/)[1];
+      console.log(title);
+      console.log(content);
+      content = await turndownService.turndown(content);
+      // const content_cn = await TranslateService.markdown(content);
+      const content_cn = null;
+      weekly.pid = pid;
+      weekly.date = date;
+      weekly.cid = cid;
+      weekly.content = content;
+      weekly.content_cn = content_cn;
+      weekly.title = title;
+      weekly.title_cn = await TranslateService.string(title);
+      weekly.url = url;
+      const data = await repo.save(weekly);
+      return (ctx.body = data);
+    }
+
+    if (String(cid) === "23") {
       // CSS
       url = `${mapData.uri}/issue-${id}/`;
       const { body } = await cgot(url);
@@ -205,9 +225,13 @@ export default class WeeklyController {
       content = content
         .replace(/(\t|\n)/g, "")
         .replace(/( target="[^"]+")/gi, "")
-        .replace(/( rel="[^"]+")/gi, "");
+        .replace(/( rel="[^"]+")/gi, "")
+        .replace(/<p><a class="article-call-to-action"[^<]+<\/a><\/p>/g, "");
       content = content.split("</time></header>")[1];
+      console.log(title);
+      console.log(content);
       content = await turndownService.turndown(content);
+      // content = content.replace(/--/g, "")
       const content_cn = await TranslateService.markdown(content);
       weekly.pid = pid;
       weekly.date = date;
@@ -221,7 +245,7 @@ export default class WeeklyController {
       return (ctx.body = data);
     }
 
-    if (String(cid) === '24') {
+    if (String(cid) === "24") {
       // cron
       url = `${mapData.uri}/issue-${id}/`;
       const { body } = await cgot(url);
@@ -237,8 +261,12 @@ export default class WeeklyController {
         .replace(/( rel="[^"]+")/gi, "")
         .replace(REG_ID, "");
       content = '<div class="cronweekly-content' + content;
+      content = content.split("<h1>Jobs")[0] + "</div>";
+      console.log(title);
+      console.log(content);
       content = await turndownService.turndown(content);
-      const content_cn = await TranslateService.markdown(content);
+      // const content_cn = await TranslateService.markdown(content);
+      const content_cn = null;
       weekly.pid = pid;
       weekly.date = date;
       weekly.cid = cid;
@@ -252,10 +280,18 @@ export default class WeeklyController {
     }
 
     if (String(cid) === "25") {
+      // web tools weekly
       url = `${mapData.uri}/archives/issue-${id}/`;
       const { body } = await cgot(url);
-      console.log(body)
-      return (ctx.body = body);
+      title = body.match(/<title>[^\(]+\(([^\)]+)\)<\/title>/)[1];
+      content = body
+        .replace(REG_STYLE, "")
+        .split("<div>\n<h").map(v => v.split("<!--[if mso | IE]>")[0])
+        .filter((v, index) => index !== 0)
+      return (ctx.body = {
+        title,
+        content
+      });
     }
 
     const { body } = await cgot(url);
@@ -284,10 +320,16 @@ export default class WeeklyController {
       .replace(/( width="100%" cellpadding="0" cellspacing="0")/g, "")
       .replace(/<div><\/div>/g, "")
       .replace(REG_NAME, "")
+      .replace(
+        /<a href="https:\/\/[\w\/.]+"><img src="https:\/\/copm.s3.amazonaws.com\/[\w]+.png" width="[\d]+" height="[\d]+" align="right" alt="" class="som">/g,
+        ""
+      ) // 去掉广告图
       .split(REG_READ)[1];
-    if (String(cid) === '5') {
-      content = content.replace(REG_MB_AUTHER, '')
+    if (String(cid) === "5") {
+      content = content.replace(REG_MB_AUTHER, "");
     }
+    console.log(title);
+    console.log(content);
     content = await turndownService.turndown(content);
     const content_cn = await TranslateService.markdown(content);
     weekly.pid = pid;
@@ -306,14 +348,18 @@ export default class WeeklyController {
     const { cid = "1", pid = "", type = "md" } = ctx.request.query;
     const repo = getManager().getRepository(Weekly);
     const where = pid ? { cid, pid } : { cid };
-    let data: any = await repo.find({ where, order: { pid: "DESC" }, take: 1 });
+    let data: any = await repo.find({
+      where,
+      order: { pid: "DESC", id: "DESC" },
+      take: 1,
+    });
     data = data.length ? data[0] : {};
     if (type === "html" && data.content) {
       data = {
         ...data,
         content: marked(data.content),
-        content_cn: data.content_cn ? marked(data.content_cn): null
-      }
+        content_cn: data.content_cn ? marked(data.content_cn) : null,
+      };
     }
     return (ctx.body = data);
   }

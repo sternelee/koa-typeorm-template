@@ -10,15 +10,15 @@ export default class TranslateService {
   }
 
   static async markdown(md: string) {
-    const caches = []; //缓存链接不做翻译，使用$$$$代替
+    const caches = []; //缓存链接不做翻译，使用$$$代替
     const str = md.replace(/(\]\([^\)]+\))/g, function (match, captch) {
       caches.push(match.replace("]", ""));
-      return "]$$$$";
+      return "]$$$";
     });
     try {
       let content = await translate(str, { to: "zh" });
       let index = 0
-      content = content.replace(/(\${4})/g, function (match, captch) {
+      content = content.replace(/(\${3})/g, function (match, captch) {
         index += 1
         return caches[index -1] + ' ';
       });
